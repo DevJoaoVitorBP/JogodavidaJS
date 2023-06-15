@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang = "pt-BR">
+<head>
+  <title>Jogo da Vida</title>
+
+	<!--Let browser know website is optimized for mobile-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	
+
+	<meta name="theme-color" content="#000">
+	<meta name="msapplication-navbutton-color" content="#000">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#000">
+	
+
+    
+  <style>
+
+    
+    table {
+      border-collapse: collapse;
+      
+    }
+    td {
+      width: 20px;
+      height: 20px;
+      border: 1px solid green;
+    }
+    .alive {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jogo da Vida</h1>
+  <table id="tabuleiro"></table>
+
+  <script>
+    // Definindo as dimensões do tabuleiro
+    const largura = 4;
+    const altura = 4;
+
+    // Criando o tabuleiro vazio
+    let tabuleiro = criarTabuleiro(largura, altura);
+
+    // Preenchendo o tabuleiro com células vivas aleatoriamente
+    preencherTabuleiro(tabuleiro);
+
+    // Renderizando o tabuleiro inicial
+    renderizarTabuleiro(tabuleiro);
+
+    // Executando o jogo da vida
+    executarJogoDaVida(tabuleiro);
+
+    // Função para criar um tabuleiro vazio
+    function criarTabuleiro(largura, altura) {
+      const tabuleiro = new Array(largura);
+      for (let i = 0; i < largura; i++) {
+        tabuleiro[i] = new Array(altura);
+      }
+      return tabuleiro;
+    }
+
+    // Função para preencher o tabuleiro com células vivas aleatoriamente
+    function preencherTabuleiro(tabuleiro) {
+      for (let i = 0; i < tabuleiro.length; i++) {
+        for (let j = 0; j < tabuleiro[i].length; j++) {
+          tabuleiro[i][j] = Math.random() < 0.5 ? 1 : 0; // 1 representa célula viva, 0 representa célula morta
+        }
+      }
+    }
+
+    // Função para renderizar o tabuleiro na página
+    function renderizarTabuleiro(tabuleiro) {
+      const tabela = document.getElementById('tabuleiro');
+      tabela.innerHTML = '';
+
+      for (let i = 0; i < tabuleiro.length; i++) {
+        const linha = document.createElement('tr');
+        for (let j = 0; j < tabuleiro[i].length; j++) {
+          const celula = document.createElement('td');
+          celula.className = tabuleiro[i][j] === 1 ? 'alive' : '';
+          linha.appendChild(celula);
+        }
+        tabela.appendChild(linha);
+      }
+    }
+
+    // Função para executar o jogo da vida
+    function executarJogoDaVida(tabuleiro) {
+      const novaGeracao = criarTabuleiro(largura, altura);
+
+      for (let i = 0; i < tabuleiro.length; i++) {
+        for (let j = 0; j < tabuleiro[i].length; j++) {
+          const vizinhosVivos = contarVizinhosVivos(tabuleiro, i, j);
+
+          if (tabuleiro[i][j] === 1) {
+            if (vizinhosVivos < 2 || vizinhosVivos > 3) {
+              novaGeracao[i][j] = 0; // A célula morre
+            } else {
+              novaGeracao[i][j] = 1; // A célula continua viva
+            }
+          } else {
+            if (vizinhosVivos === 3) {
+              novaGeracao[i][j] = 1; // A célula nasce
+            } else {
+              novaGeracao[i][j] = 0; // A célula permanece morta
+            }
+          }
+        }
+      }
+
+      renderizarTabuleiro(novaGeracao);
+
+      // Chamar recursivamente a função para a próxima geração
+      setTimeout(() => {
+        executarJogoDaVida(novaGeracao);
+      }, 1000); // Aguardar 1 segundo entre cada geração
+    }
+
+    // Função para contar o número de vizinhos vivos de uma célula
+    function contarVizinhosVivos(tabuleiro, x, y) {
+      let vizinhosVivos = 0;
+      const direcoes = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],           [0, 1],
+        [1, -1],  [1, 0],  [1, 1]
+      ];
+
+      for (let i = 0; i < direcoes.length; i++) {
+        const [dx, dy] = direcoes[i];
+        const novoX = x + dx;
+        const novoY = y + dy;
+
+        if (novoX >= 0 && novoX < tabuleiro.length && novoY >= 0 && novoY < tabuleiro[x].length) {
+          vizinhosVivos += tabuleiro[novoX][novoY];
+        }
+      }
+
+      return vizinhosVivos;
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
